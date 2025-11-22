@@ -1,42 +1,44 @@
 #!/bin/bash
 
-# Codespaces Setup Script
+# CodeSpace User Creation Script
+# Usage: ./create_user.sh username password
 
-# ----------------------------------------------------------------------
-# 1. Define Variables
-# ----------------------------------------------------------------------
-
-# $PWD holds the current path, which should be the workspace root when
-# the user executes this script from the default terminal location.
-WORKSPACE_ROOT="$PWD"
-SYMLINK_PATH="$HOME/repo"
-
-echo "Starting Codespaces setup..."
-echo "----------------------------------------------------"
-
-# ----------------------------------------------------------------------
-# 2. Create Symlink (Shortcut)
-# ----------------------------------------------------------------------
-
-# Check if the symlink already exists to prevent an error
-if [ -L "$SYMLINK_PATH" ]; then
-    echo "Symlink '~/repo' already exists. Removing old link..."
-    rm "$SYMLINK_PATH"
-elif [ -d "$SYMLINK_PATH" ]; then
-    echo "Warning: A directory named 'repo' already exists in home. Skipping symlink creation."
+# Check if username and password were provided
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 username password"
+    echo "Example: $0 kirk abc123"
     exit 1
 fi
 
-# Create the new symlink
-echo "Creating symlink: ~/repo -> $WORKSPACE_ROOT"
-ln -s "$WORKSPACE_ROOT" "$SYMLINK_PATH"
+USERNAME=$1
+PASSWORD=$2
+GROUPS="sudo,adm,trek"
 
-if [ $? -eq 0 ]; then
-    echo "SUCCESS: Symlink '~/repo' created."
-else
-    echo "ERROR: Failed to create symlink."
+echo "Creating user: $USERNAME..."
+
+# Check if user already exists
+if id "$USERNAME" &>/dev/null; then
+    echo "Error: User $USERNAME already exists!"
+    exit 1
 fi
 
-echo "----------------------------------------------------"
+# Create the user with home directory and groups
+sudo useradd -m -d /tmp/${USERNAME}_home -G $GROUPS -s /bin/bash $USERNAME
 
-echo "Setup complete. You can now use 'cd ~/repo' from anywhere, or 'cd repo' once you are in the home directory (~)."
+if [ $? -eq 0 ]; then
+    echo "User $USERNAME created successfully in groups: $GROUPS"
+    
+    # Set password
+    echo "$USERNAME:$PASSWORD" | sudo chpasswd
+    
+    if [ $? -eq 0 ]; then
+        echo "Password set for $USERNAME"
+        echo "You can now login with: su - $USERNAME"
+    else
+        echo "Error setting password for $USERNAME"
+        exit 1
+    fi
+else
+    echo "Error creating user $USERNAME"
+    exit 1
+fi
