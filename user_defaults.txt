@@ -1,0 +1,38 @@
+USER DEFAULTS - /etc/skel Directory
+===================================
+
+The /etc/skel directory is used to populate new user home directories
+with default files and configuration.
+
+CREATING DEFAULT FILES FOR NEW USERS:
+
+1. Navigate to /etc/skel:
+   cd /etc/skel
+
+2. Create a default file (example: quotes.txt):
+   sudo touch quotes.txt
+
+3. Any new user created after this will automatically get:
+   - A copy of quotes.txt in their home directory
+
+EXAMPLE WORKFLOW:
+
+1. Create default quotes file:
+   sudo touch /etc/skel/quotes.txt
+
+2. Create new user (kirk):
+   sudo useradd -m -d /tmp/kirk_home -G sudo,adm,trek -s /bin/bash kirk
+
+3. Check kirk's home directory:
+   ls -la /tmp/kirk_home/
+   
+4. Notice that quotes.txt is now in kirk's directory!
+
+THIS IS USEFUL FOR:
+- Pre-populating configuration files
+- Setting default templates
+- Ensuring all new users have consistent baseline files
+- Providing example files for users to modify
+
+NOTE: Files in /etc/skel are only copied when the user is created.
+Changes to /etc/skel won't affect existing users.
