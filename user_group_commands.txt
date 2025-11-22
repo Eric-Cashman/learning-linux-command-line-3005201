@@ -1,0 +1,112 @@
+USER & GROUP MANAGEMENT COMMANDS
+=================================
+
+VIEWING USERS AND GROUPS:
+
+List all users:
+  cat /etc/passwd
+
+List all groups:
+  cat /etc/group
+
+View specific user information:
+  id username
+  getent passwd username
+
+View specific group information:
+  getent group groupname
+
+CREATE USERS AND GROUPS:
+
+Create a new group:
+  sudo groupadd groupname
+
+Create a user with home directory:
+  sudo useradd -m -d /home/username -g primarygroup username
+
+Create user with shell and groups:
+  sudo useradd -m -d /tmp/username_home -G group1,group2 -s /bin/bash username
+
+ADD USERS TO GROUPS:
+
+Add user to secondary group:
+  sudo usermod -G groupname -a username
+  
+NOTE: The -a (append) flag is critical!
+Without -a, the user will be removed from other groups.
+
+MODIFY USERS:
+
+Change user's primary group:
+  sudo usermod -g newgroup username
+
+Add user to multiple groups:
+  sudo usermod -G group1,group2,group3 -a username
+
+SET PASSWORDS:
+
+Set password for user (interactive):
+  sudo passwd username
+
+Set password from command line:
+  echo "username:password" | sudo chpasswd
+
+LOGIN AS DIFFERENT USER:
+
+Switch to another user:
+  su - username
+
+Exit back to previous user:
+  exit
+  or
+  Ctrl + D
+
+DELETE USERS AND GROUPS:
+
+Delete user (keep home directory):
+  sudo userdel username
+
+Delete user and home directory:
+  sudo userdel -r username
+
+Delete user and remove all files:
+  sudo userdel -rf username
+
+Delete a group:
+  sudo groupdel groupname
+
+USEFUL OPTIONS:
+
+useradd options:
+  -m         Create home directory
+  -d         Specify home directory path
+  -g         Set primary group
+  -G         Add to secondary groups
+  -s         Set login shell
+  -h         Show help
+
+userdel options:
+  -r         Remove home directory
+  -f         Force removal
+  -h         Show help
+
+usermod options:
+  -a         Append to groups (use with -G)
+  -g         Change primary group
+  -G         Set secondary groups
+  -h         Show help
+
+EXAMPLE USERS CREATED IN THIS CLASS:
+
+Trek Characters:
+  - kirk: "I want answers, Mister!"
+  - spock: "Highly illogical, Captain."
+  - uhura: "Hailing frequencies open. Make it quick."
+
+Wars Characters:
+  - luke: "But I was going into Toshi station!"
+  - han: "Never tell me the odds!"
+  - leia: "Into the garbage chute, flyboy!"
+
+All created with password: abc123
+All in groups: sudo, adm, trek (or wars for wars characters)
